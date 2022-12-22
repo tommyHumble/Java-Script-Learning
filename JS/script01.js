@@ -1,1 +1,1 @@
-alert('Wake the fuck up, Samurai');
+alert('Wake the fuck up, Samurai!');
