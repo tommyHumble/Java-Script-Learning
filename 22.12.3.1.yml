@@ -1,0 +1,108 @@
+all:
+  vars:
+    sa_deployment_id: 3377
+    port_host: 8080
+    config:
+      common:
+        # Параметры подключения к основной рабочей базе данных
+        erudite_db.engine: postgresql
+        erudite_db.host: pgdb
+        erudite_db.port: 5432
+        erudite_db.database: erudite_db
+        erudite_db.user: erudite_user
+        erudite_db.password: sOFfV50IaKBV2eQ
+        # Параметры подключения к статистической базе данных
+        erudite_db_stat.engine: postgresql
+        erudite_db_stat.host: pgdb
+        erudite_db_stat.port: 5432
+        erudite_db_stat.database: erudite_db_stat
+        erudite_db_stat.user: erudite
+        erudite_db_stat.password: EI3VcQlHTOA9gXP
+        # Параметры подключения к базе левитана
+        levitan_db.engine: postgresql
+        levitan_db.host: pgdb
+        levitan_db.database: levitan_db
+        levitan_db.user: levitan_user
+        levitan_db.password: die9naevieFuXae
+      naumen_speech_ai:
+        max_audio_length: 2048
+        device_use: cpu
+        replicas:
+          am-short: 1
+          am-long: 1
+          lm: 1
+          api: 1
+        cpu_core_limits:
+          short: 1
+          long: 3
+          lm: 1
+      erudite-web:
+        erudite.levitan.host: 10.11.1.14
+        erudite.levitan.scheme: http
+        erudite.levitan.port: 8282
+        erudite.levitan.user: api_access
+        erudite.levitan.password: api
+      levitan:
+        server.port: 8282
+        levitan.asr.saveStreamAudio.daysToKeep: 7
+        levitan.storage.daysToKeep: 7
+    docker:
+      # Образ OS продукта
+      #image_os: "rhel"
+      #registry:
+      #  erudite_url: "erudite.nau.team"
+      #  integration_url: "integration.nau.team"
+      #  silero_url: "naumen-asr.nau.team"
+      #logging:
+      #  driver: "json-file"
+      #  options:
+      #    max-size: "150m"
+      #    max-file: "6"
+
+    monitoring:
+      # Требуется ли установка мониторинга
+      install: true
+    logging:
+      # Требуется ли установка логирования
+      install: false
+    postgres:
+      # Требуется ли установка базы данных. Если используется внешняя база данных, установите false
+      install: true
+      superuser_password: wiedei7Ahs5ochu
+    erudite:
+      # Требуется ли установка erudite
+      install: true
+    levitan:
+      # Требуется ли установка levitan. Обязательна для голосовых проектов
+      install: true
+    threducon:
+      # Требуется ли установка treducon. Обязательна для интеграции с Webim или Threads
+      install: false
+    naumen_asr:
+      # Требуется ли установка Naumen ASR.
+      install: true
+    naumen_tts:
+      # Требуется ли установка Naumen TTS
+      install: false
+
+  hosts:
+    localhost:
+      # Хост для получения лицензий
+      ansible_host: 127.0.0.1
+      ansible_connection: local
+      ansible_become: false
+    asr:
+      ansible_host: 10.11.1.14
+  children:
+    manager:
+      hosts: {localhost}
+    pgdb:
+      hosts: {localhost}
+    erudite_web:
+      hosts: {localhost}
+    threducon:
+      hosts: {localhost}
+    levitan:
+      hosts: {asr}
+    naumen_speech_ai:
+      hosts: {asr}
